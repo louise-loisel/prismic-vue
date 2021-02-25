@@ -1,48 +1,39 @@
 import prismicJS from 'prismic-javascript'
+import prismicDOM from 'prismic-dom'
 
-import Components from './components'
-import { asHtml, asText, asDate, asLink } from './methods'
+import EditButton from './components/EditButton.vue'
+import Embed from './components/Embed.vue'
+import Image from './components/Image.vue'
+import Link from './components/Link.vue'
+import RichText from './components/RichText.vue'
 
-function attachMethods(Vue, options) {
-  Vue.prototype.$prismic.asHtml = function(richText, linkResolver, htmlSerializer) {
-    return asHtml(
-      richText,
-      linkResolver || options.linkResolver,
-      htmlSerializer || options.htmlSerializer
-    )
-  }
-  Vue.prototype.$prismic.asText = asText
-  Vue.prototype.$prismic.richTextAsPlain = asText
-  Vue.prototype.$prismic.asDate = asDate
-  Vue.prototype.$prismic.asLink = function(link, linkResolver) {
-    return asLink(link, linkResolver || options.linkResolver)
-  }
+try {
+  console.warn(
+    '[prismic-vue] This git version of `prismic-vue/tree/nuxt` is deprecated and will be removed. For more information please check installation warning or https://github.com/prismicio/prismic-vue/tree/nuxt#readme'
+  );
+} catch (error) {
+  // Fail silently
 }
 
 const PrismicVue = {
-  install: function (Vue, options) {
-    const { linkType = 'vueRouter' } = options
+  install: function (Vue, options = {}) {
     Vue.prototype.$prismic = prismicJS
     Vue.prototype.$prismic.endpoint = options.endpoint
     Vue.prototype.$prismic.linkResolver = options.linkResolver
     Vue.prototype.$prismic.htmlSerializer = options.htmlSerializer
     Vue.prototype.$prismic.client = prismicJS.client(options.endpoint, options.apiOptions)
-
-    attachMethods(Vue, options)
-
-    const components = {
-      ...Components.common,
-      ...Components[linkType]
+    Vue.prototype.$prismic.richTextAsPlain = function (field) {
+      if (!field) {
+        return ''
+      }
+      return prismicDOM.RichText.asText(field)
     }
 
-    /**
-     * Global registration of common components + stack specific components.
-     * Currently, only Nuxt links differ though. Use `linkType: 'nuxt'` in that case.
-     */
-    Object.entries(components)
-    .forEach(([_, c]) => {
-      Vue.component(c.name, c)
-    })
+    Vue.component('PrismicEditButton', EditButton)
+    Vue.component('PrismicEmbed', Embed)
+    Vue.component('PrismicImage', Image)
+    Vue.component('PrismicLink', Link)
+    Vue.component('PrismicRichText', RichText)
   }
 }
 
