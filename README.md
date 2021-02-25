@@ -10,7 +10,10 @@ the near future! Its purpose back then was to be used as a workaround
 while waiting for a first-class Nuxt integration. Please upgrade to
 the NPM version of `prismic-vue`.
 
-We have since released a first class integration for Nuxt!
+We have since released a first class integration for Nuxt! Here's the
+migration article:
+
+- https://prismic.io/docs/technologies/migrating-to-the-nuxtjs-prismic-module-vuejs
 
 Check out `@nuxtjs/prismic` on:
 
